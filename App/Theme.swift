@@ -40,17 +40,21 @@ enum Theme {
         static let holdHeight: CGFloat = 2
     }
 
-    /// The battery drawing above the headline, laid out on a 72 × 34 sketch.
+    /// The battery drawing above the headline, laid out on an 84 × 38 sketch: the charge that is left on the
+    /// left, the percent in the empty part.
     enum Mark {
-        static let width: CGFloat = 72
-        static let height: CGFloat = 34
+        static let width: CGFloat = 84
+        static let height: CGFloat = 38
         static let stroke: CGFloat = 2
-        static let radius: CGFloat = 9
+        static let radius: CGFloat = 10
         static let inset: CGFloat = 5
-        static let chargeRadius: CGFloat = 4.5
+        static let chargeRadius: CGFloat = 5
         static let minCharge: CGFloat = 7
+        /// The charge never takes more than this share of the inside, so the percent always has room.
+        static let maxChargeShare: CGFloat = 0.35
+        static let percent: CGFloat = 15
         static let capWidth: CGFloat = 3.5
-        static let capHeight: CGFloat = 12
+        static let capHeight: CGFloat = 13
         static let capGap: CGFloat = 3
     }
 

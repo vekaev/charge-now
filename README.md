@@ -22,7 +22,7 @@ on-device, nothing uploaded.
 ## Features
 
 - **A warning at 10%.** The screen dims and blurs: "you need to charge as soon as possible.", with the percent
-  and the time macOS expects is left. One click or Esc dismisses it.
+  inside a small battery and the time macOS expects is left. One click or Esc dismisses it.
 - **A block at 5%.** The same screen, darker, on every display. It stays until the charger is plugged in, even
   if you dismissed the warning.
 - **Never a dead end.** Hold Esc (or the mouse) for two seconds to keep working. The block comes back at the

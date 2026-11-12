@@ -8,10 +8,10 @@ final class OverlayModel: ObservableObject {
     @Published var holding = false
     var holdSeconds = 2.0
 
-    /// What the number counts, in plain words, with the time left when macOS has an estimate.
-    var detail: String {
-        guard let minutesLeft else { return "\(percent)% battery left." }
-        return "\(percent)% battery left, about \(minutesLeft) \(minutesLeft == 1 ? "minute" : "minutes")."
+    /// The time left, when macOS has an estimate. The percent itself is inside the battery drawing.
+    var detail: String? {
+        guard let minutesLeft else { return nil }
+        return "About \(minutesLeft) \(minutesLeft == 1 ? "minute" : "minutes") left."
     }
 }
 
@@ -26,14 +26,16 @@ struct OverlayView: View {
             Theme.shade.opacity(blocked ? Theme.dimBlock : Theme.dimWarning)
 
             VStack(spacing: 0) {
-                BatteryMark(fraction: Double(model.percent) / 100, charge: blocked ? Theme.danger : Theme.ink)
+                BatteryMark(percent: model.percent, charge: blocked ? Theme.danger : Theme.ink)
                     .padding(.bottom, Theme.Space.l)
                 InkHeadline(text: "you need to charge as soon as possible.")
-                Text(model.detail)
-                    .font(.system(size: Theme.Size.detail))
-                    .monospacedDigit()
-                    .foregroundStyle(Theme.quiet)
-                    .padding(.top, Theme.Space.xxs)
+                if let detail = model.detail {
+                    Text(detail)
+                        .font(.system(size: Theme.Size.detail))
+                        .monospacedDigit()
+                        .foregroundStyle(Theme.quiet)
+                        .padding(.top, Theme.Space.xxs)
+                }
             }
             .padding(.horizontal, Theme.Space.xxl)
 
@@ -61,21 +63,34 @@ struct OverlayView: View {
     }
 }
 
-/// An empty battery with the little charge that is left. The outline is ink; only the charge takes a color.
+/// An empty battery with the little charge that is left and, in the empty part, the percent.
+/// The outline and the number are ink; only the charge takes a color.
 struct BatteryMark: View {
-    var fraction: Double
+    var percent: Int
     var charge: Color
 
     var body: some View {
         let room = Theme.Mark.width - Theme.Mark.inset * 2
+        let share = min(CGFloat(max(percent, 0)) / 100, Theme.Mark.maxChargeShare)
         HStack(spacing: Theme.Mark.capGap) {
-            ZStack(alignment: .leading) {
+            ZStack {
                 RoundedRectangle(cornerRadius: Theme.Mark.radius, style: .continuous)
                     .strokeBorder(Theme.ink, lineWidth: Theme.Mark.stroke)
-                RoundedRectangle(cornerRadius: Theme.Mark.chargeRadius, style: .continuous)
-                    .fill(charge)
-                    .frame(width: max(Theme.Mark.minCharge, room * min(max(fraction, 0), 1)))
-                    .padding(Theme.Mark.inset)
+                HStack(spacing: 0) {
+                    RoundedRectangle(cornerRadius: Theme.Mark.chargeRadius, style: .continuous)
+                        .fill(charge)
+                        .frame(width: max(Theme.Mark.minCharge, room * share))
+                    Text("\(percent)%")
+                        .font(.system(size: Theme.Mark.percent, weight: .bold))
+                        .monospacedDigit()
+                        .tracking(-Theme.Mark.percent * 0.025)
+                        .foregroundStyle(Theme.ink)
+                        .lineLimit(1)
+                        .fixedSize()
+                        .contentTransition(.numericText())
+                        .frame(maxWidth: .infinity)
+                }
+                .padding(Theme.Mark.inset)
             }
             .frame(width: Theme.Mark.width, height: Theme.Mark.height)
 
@@ -83,7 +98,8 @@ struct BatteryMark: View {
                 .fill(Theme.ink)
                 .frame(width: Theme.Mark.capWidth, height: Theme.Mark.capHeight)
         }
-        .accessibilityHidden(true)
+        .accessibilityElement()
+        .accessibilityLabel("\(percent)% battery left")
     }
 }
 

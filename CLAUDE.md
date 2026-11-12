@@ -45,7 +45,8 @@ Read `App/Theme.swift` before touching the overlay; `scripts/check-design.sh` fa
 radius or color outside it. The owner's taste (monochrome ink, Stoic style): one small mark, one bold lowercase
 headline ending in a period, one plain sentence under it, lots of air. The overlay is always dark, whatever the
 system appearance: it is the screen, dimmed. White ink; the only hue is `Theme.danger`, on the battery's last
-sliver in the block. Calm springs, nothing looping. Every number says what it counts ("4% battery left").
+sliver in the block. Calm springs, nothing looping. The percent sits inside the battery mark, so it needs no label; the sentence
+under the headline is only the time left, and is absent when macOS has no estimate.
 
 The overlay is a non-activating `NSPanel` at the shielding window level on every screen. Non-activating
 matters: a background app cannot reliably bring itself to the front on current macOS, and the panel can take
